@@ -28,14 +28,11 @@ def test_rastertiles_valid():
     assert r.path == raster_path
     assert r.tiles_size == 512
     assert not r.nodata
-    assert r.bounds == [
-        -61.56738281249997,
-        16.225223624120076,
-        -61.5618896507246,
-        16.23049792684362,
-    ]
+    assert r.bounds == pytest.approx(
+        [-61.56738281249997, 16.225223624120076, -61.5618896507246, 16.23049792684362]
+    )
     assert r.indexes == (1, 2, 3)
-    assert r.overiew_levels == [2, 4, 8, 16, 32, 64]
+    assert r.overview_levels == [2, 4, 8, 16, 32, 64]
 
 
 def test_rastertiles_invalidcogeo():
@@ -78,18 +75,15 @@ def test_rastertiles_valid_nodata():
 def test_rastertiles_get_bounds():
     """Should work as expected (create rastertiles object and get bounds)."""
     r = RasterTiles(raster_path)
-    assert r.get_bounds() == [
-        -61.56738281249997,
-        16.225223624120076,
-        -61.5618896507246,
-        16.23049792684362,
-    ]
+    assert r.get_bounds() == pytest.approx(
+        [-61.56738281249997, 16.225223624120076, -61.5618896507246, 16.23049792684362]
+    )
 
 
 def test_rastertiles_get_centers():
     """Should work as expected (create rastertiles object and get center)."""
     r = RasterTiles(raster_path)
-    assert r.get_center() == [-61.56463623161228, 16.227860775481847]
+    assert r.get_center() == pytest.approx([-61.56463623161228, 16.227860775481847])
 
 
 def test_rastertiles_tile_exists_valid():

@@ -15,18 +15,14 @@ with open("rio_glui/__init__.py") as f:
             continue
 
 # Runtime requirements.
-inst_reqs = ["tornado==4.5.3", "rio-tiler~=1.0", "click", "rio-color"]
-
-extra_reqs = {
-    "test": ["mock", "pytest", "pytest-cov"],
-    "dev": ["pytest", "pytest-cov", "pre-commit"],
-}
+inst_reqs = open("requirements.txt").read().strip().split("\n")
+extra_reqs = {"dev": open("requirements.dev.txt").read().strip().split("\n")}
 
 
 setup(
     name="rio-glui",
     version=version,
-    description=u"Inspect CloudOptimized Geotiff using Mapbox GL JS",
+    description="Inspect CloudOptimized Geotiff using Mapbox GL JS",
     long_description=readme,
     classifiers=[
         "Intended Audience :: Information Technology",
@@ -37,7 +33,7 @@ setup(
         "Topic :: Scientific/Engineering :: GIS",
     ],
     keywords="COGEO CloudOptimized Geotiff rasterio Mapbox-GL",
-    author=u"Damon Burgett",
+    author="Damon Burgett",
     author_email="damon@mapbox.com",
     url="https://github.com/mapbox/rio-glui",
     license="BSD",

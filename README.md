@@ -87,8 +87,6 @@ cd rio-glui
 pip install -e .[dev]
 ```
 
-*Python3.6 only*
-
 This repo is set to use <span class="title-ref">pre-commit</span> to run
 *flake8*, *pydocstring* and *black* ("uncompromising Python code
 formatter") when commiting new code.
@@ -96,7 +94,7 @@ formatter") when commiting new code.
 ``` console
 $ pre-commit install
 $ git add .
-$ git commit -m'my change'
+$ git commit -m 'my change'
 black....................................................................Passed
 Flake8...................................................................Passed
 Verifying PEP257 Compliance..............................................Passed

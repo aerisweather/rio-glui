@@ -4,9 +4,10 @@ import math
 
 import mercantile
 import rasterio
+from rasterio.crs import CRS
 from rasterio.warp import transform_bounds, calculate_default_transform
 
-from rio_tiler.utils import tile_read
+from rio_tiler.reader import part
 
 
 def _meters_per_pixel(zoom, lat):
@@ -53,11 +54,8 @@ class RasterTiles(object):
             try:
                 assert src.driver == "GTiff"
                 assert src.is_tiled
-                assert src.overviews(1)
-            except (AttributeError, AssertionError, KeyError):
-                raise Exception(
-                    "{} is not a valid CloudOptimized Geotiff".format(src_path)
-                )
+            except (AttributeError, AssertionError):
+                raise Exception("{} is not a valid Geotiff".format(src_path))
 
             self.bounds = list(
                 transform_bounds(
@@ -69,7 +67,7 @@ class RasterTiles(object):
             self.crs = src.crs
             self.crs_bounds = src.bounds
             self.meta = src.meta
-            self.overiew_levels = src.overviews(1)
+            self.overview_levels = src.overviews(1)
 
     def get_bounds(self):
         """Get raster bounds (WGS84)."""
@@ -128,7 +126,7 @@ class RasterTiles(object):
         )
 
         res_max = max(abs(dst_affine[0]), abs(dst_affine[4]))
-        max_decim = self.overiew_levels[-1]
+        max_decim = self.overview_levels[-1] if len(self.overview_levels) > 0 else 1
         resolution = max_decim * res_max
 
         tgt_z = 0
@@ -146,12 +144,15 @@ class RasterTiles(object):
 
     def read_tile(self, z, x, y):
         """Read raster tile data and mask."""
-        mercator_tile = mercantile.Tile(x=x, y=y, z=z)
-        tile_bounds = mercantile.xy_bounds(mercator_tile)
-        return tile_read(
-            self.path,
-            tile_bounds,
-            self.tiles_size,
-            indexes=self.indexes,
-            nodata=self.nodata,
-        )
+        with rasterio.open(self.path) as src:
+            mercator_tile = mercantile.Tile(x=x, y=y, z=z)
+            tile_bounds = mercantile.xy_bounds(mercator_tile)
+            return part(
+                src,
+                tile_bounds,
+                height=self.tiles_size,
+                width=self.tiles_size,
+                bounds_crs=CRS.from_epsg(3857),
+                indexes=self.indexes,
+                nodata=self.nodata,
+            )
