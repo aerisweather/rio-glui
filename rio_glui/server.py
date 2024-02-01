@@ -248,7 +248,7 @@ class RasterTileHandler(web.RequestHandler):
             render(
                 data,
                 mask=mask,
-                color_map=self.colormap,
+                colormap=self.colormap,
                 img_format=tileformat,
                 **options
             )
